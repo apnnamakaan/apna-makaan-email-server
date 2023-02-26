@@ -1,0 +1,8 @@
+run $go run main.go
+
+1) send data using body
+body {
+    "to" : "playatanu@gmail.com",
+    "subject" : "This is subject",
+    "html": "<h1 style='color: red'>Ami atanu </h1> <h1 style='color: blue'>Ami atanu </h1>"
+}
