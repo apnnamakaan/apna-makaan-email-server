@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-go build -o ./app main.go /services/email.go
+go build -o ./app main.go  email.go

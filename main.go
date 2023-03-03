@@ -1,14 +1,13 @@
 package main
 
 import (
-	"net/http"
-
 	"fmt"
+	"net/http"
+	"os"
 
+	"am.com/pakages/util"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-
-	"nvc.com/events/services"
 )
 
 type EmailBody struct {
@@ -22,16 +21,16 @@ type ResponseType struct {
 	Message string `json:"message"`
 }
 
-func Home(context *gin.Context) {
+func home(context *gin.Context) {
 
 	context.JSON(200, gin.H{
 		"status": "true",
 		"author": "Atanu Debnath",
-		"about":  "Mail server",
+		"about":  "Email server",
 	})
 }
 
-func SendMail(context *gin.Context) {
+func send(context *gin.Context) {
 	var emailBody EmailBody
 	if err := context.BindJSON(&emailBody); err != nil {
 		return
@@ -45,7 +44,7 @@ func SendMail(context *gin.Context) {
 	unsuccessfulres.Status = "false"
 	unsuccessfulres.Message = "email not send successful"
 
-	isEmailSend := emailervice.SendMail(emailBody.To, emailBody.Subject, emailBody.Html)
+	isEmailSend := util.SendEmail(emailBody.To, emailBody.Subject, emailBody.Html)
 
 	if isEmailSend {
 		context.IndentedJSON(http.StatusAccepted, successfulres)
@@ -56,14 +55,24 @@ func SendMail(context *gin.Context) {
 }
 
 func main() {
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
 
-	router := gin.Default()
-	router.GET("/", Home)
-	router.POST("/send", SendMail)
-	router.Run("localhost:8083")
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.New()
+	//router := gin.Default()
+	router.GET("/", home)
+	router.POST("/send", send)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8083"
+	}
+	if err := router.Run(":" + port); err != nil {
+		fmt.Printf("error: %s", err)
+	}
 
 }

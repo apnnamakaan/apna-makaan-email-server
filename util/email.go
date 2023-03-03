@@ -1,4 +1,4 @@
-package emailervice
+package util
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func SendMail(to string, subject string, html string) bool {
+func SendEmail(to string, subject string, html string) bool {
 
 	password := os.Getenv("EMAIL_PASSWORD")
 	auth := smtp.PlainAuth(
